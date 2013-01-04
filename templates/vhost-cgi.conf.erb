@@ -1,0 +1,34 @@
+# ************************************
+# Default template in module puppetlabs-apache
+# Managed by Puppet
+# ************************************
+
+NameVirtualHost *:<%= port %>
+<VirtualHost <%= name %>:<%= port %>>
+  ServerName <%= servername %>
+<%if serveraliases.is_a? Array -%>
+<% serveraliases.each do |name| -%><%= "  ServerAlias #{name}\n" %><% end -%>
+<% elsif serveraliases != '' -%>
+<%= "  ServerAlias #{serveraliases}" -%>
+<% end %>
+  DocumentRoot <%= docroot %>/html
+  <Directory <%= docroot %>/html>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    allow from all
+  </Directory>
+
+  ScriptAlias /cgi-bin/ "<%= docroot %>/cgi-bin/"
+  <Directory "<%= docroot %>/cgi-bin">
+    AllowOverride None
+    Options None
+    Order allow,deny
+    Allow from all
+  </Directory>
+
+  ErrorLog /var/log/httpd/<%= name %>_error.log
+  LogLevel warn
+  CustomLog /var/log/httpd/<%= name %>_access.log combined
+  ServerSignature On
+</VirtualHost>
