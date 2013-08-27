@@ -16,14 +16,17 @@ class apache::ssl {
 
   include apache
   
-  case $operatingsystem {
-     'centos', 'fedora', 'redhat': {
-        package { $apache::params::ssl_package:
-           require => Package['httpd'],
-        }
-     }
-     'ubuntu', 'debian': {
-        a2mod { "ssl": ensure => present, }
-     }
+  case $::osfamily {
+    'redhat': {
+      package { $apache::params::ssl_package:
+        require => Package['httpd'],
+      }
+    }
+    'debian': {
+      a2mod { "ssl": ensure => present, }
+    }
+    default: {
+      fail("Module ${module_name} is not supported on ${::operatingsystem}")
+    }
   }
 }
