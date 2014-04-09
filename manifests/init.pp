@@ -14,13 +14,13 @@
 #
 class apache {
   include apache::params
-  package { 'httpd': 
-    name   => $apache::params::apache_name,
+  package { 'httpd':
     ensure => present,
+    name   => $apache::params::apache_name,
   }
   service { 'httpd':
-    name      => $apache::params::apache_name,
     ensure    => running,
+    name      => $apache::params::apache_name,
     enable    => true,
     subscribe => Package['httpd'],
   }
@@ -29,16 +29,17 @@ class apache {
   #
   A2mod { require => Package['httpd'], notify => Service['httpd']}
   @a2mod {
-   'rewrite' : ensure => present;
-   'headers' : ensure => present;
-   'expires' : ensure => present;
+    'rewrite' : ensure => present;
+    'headers' : ensure => present;
+    'expires' : ensure => present;
   }
-  
-  
+
+
   file { $apache::params::vdir:
-    ensure => directory,
+    ensure  => directory,
     recurse => true,
-    purge => true,
-    notify => Service['httpd'],
-  } 
+    purge   => true,
+    require => Package['httpd'],
+    notify  => Service['httpd'],
+  }
 }
